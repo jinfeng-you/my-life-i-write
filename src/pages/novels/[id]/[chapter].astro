@@ -1,0 +1,43 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const novels = await getCollection('novels');
+  const chapters = await getCollection('chapters');
+  const paths = [];
+  for (const chapter of chapters.filter(c => !c.data.draft)) {
+    const novel = novels.find(n => n.id === chapter.data.novel);
+    if (!novel || novel.data.draft) continue;
+    paths.push({ params: { id: novel.id, chapter: chapter.id }, props: { novel, chapter } });
+  }
+  return paths;
+}
+
+const { novel, chapter } = Astro.props;
+const { Content } = await render(chapter);
+const all = (await getCollection('chapters', ({ data }) => data.novel === novel.id && !data.draft)).sort((a,b) => a.data.order - b.data.order);
+const currentIndex = all.findIndex(c => c.id === chapter.id);
+const prev = all[currentIndex - 1];
+const next = all[currentIndex + 1];
+---
+<BaseLayout title={`${chapter.data.title} — ${novel.data.title}`} reading>
+  <section class="view" data-view="chapter">
+    <article class="piece piece--novel">
+      <a class="back" href={`/novels/${novel.id}/`}><span aria-hidden="true">←</span> 目录</a>
+      <header class="chapter-head">
+        <p class="eyebrow">{novel.data.title}</p>
+        <h1 class="chapter-head__title">{chapter.data.title}</h1>
+        <p class="chapter-head__meta">第 {chapter.data.order} 章 · {novel.data.status}</p>
+      </header>
+      <div class="chapter__body chapter__body--single chapter-content">
+        <Content />
+      </div>
+      <nav class="chapter-nav" aria-label="章节翻页">
+        {prev ? <a class="chapter-nav__link" href={`/novels/${novel.id}/${prev.id}/`}><span class="chapter-nav__dir">← 上一章</span><span>{prev.data.title}</span></a> : <span></span>}
+        <a class="chapter-nav__link chapter-nav__link--toc" href={`/novels/${novel.id}/`}><span class="chapter-nav__dir">目录</span></a>
+        {next ? <a class="chapter-nav__link chapter-nav__link--next" href={`/novels/${novel.id}/${next.id}/`}><span class="chapter-nav__dir">下一章 →</span><span>{next.data.title}</span></a> : <span></span>}
+      </nav>
+    </article>
+  </section>
+</BaseLayout>

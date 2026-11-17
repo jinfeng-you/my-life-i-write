@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleEntry from '../../components/ArticleEntry.astro';
+import { getCollection } from 'astro:content';
+
+const articles = (await getCollection('articles', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const categories = [...new Set(articles.map(a => a.data.category))];
+---
+<BaseLayout title="文章 — my life I write">
+  <section class="view" data-view="writing">
+    <header class="view__head">
+      <div>
+        <p class="eyebrow">02 — 文章 / Writing</p>
+        <h2 class="view__title">文章</h2>
+      </div>
+      <p class="view__note">共 {articles.length} 篇 · 按时间倒序</p>
+    </header>
+
+    <div class="filters" aria-label="按分类筛选" role="group">
+      <button type="button" data-filter="all" aria-pressed="true">全部 <span>{articles.length}</span></button>
+      {categories.map(category => <button type="button" data-filter={category} aria-pressed="false">{category} <span>{articles.filter(a => a.data.category === category).length}</span></button>)}
+    </div>
+
+    <div class="entries" data-entries>
+      {articles.map((article, index) => (
+        <div data-entry-category={article.data.category}>
+          <ArticleEntry article={article} index={index} />
+        </div>
+      ))}
+    </div>
+    <p class="empty" data-entries-empty hidden>这个分类里还没有文字。</p>
+  </section>
+</BaseLayout>

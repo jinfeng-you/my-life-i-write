@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import NovelCard from '../../components/NovelCard.astro';
+import { getCollection } from 'astro:content';
+const novels = await getCollection('novels', ({ data }) => !data.draft);
+---
+<BaseLayout title="小说 — my life I write">
+  <section class="view" data-view="novels">
+    <header class="view__head">
+      <div>
+        <p class="eyebrow">03 — 小说 / Fiction</p>
+        <h2 class="view__title">小说</h2>
+      </div>
+      <p class="view__note">共 {novels.length} 部</p>
+    </header>
+
+    <div class="books">
+      {novels.map(novel => <NovelCard novel={novel} />)}
+    </div>
+    <p class="empty-note">以后写的长篇、短篇，都会排在这里。</p>
+  </section>
+</BaseLayout>

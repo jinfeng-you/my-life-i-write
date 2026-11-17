@@ -1,0 +1,8 @@
+/* Astro 结构化版本的少量补充，不改变原网站的视觉体系。 */
+.nav a.active { color: var(--ink); }
+.nav a.active .nav__label::after { transform: scaleX(1); background: var(--accent); }
+.article-content img { max-width: 100%; height: auto; }
+.article-content p, .chapter-content p { white-space: normal; }
+[data-entry-category][hidden] { display: none; }
+.article-content h2 { margin: 2.2em 0 1em; font-size: 1.35rem; font-weight: 400; }
+.article-content strong { font-weight: 600; }

@@ -1,0 +1,55 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const novels = await getCollection('novels');
+  return novels.filter(n => !n.data.draft).map(novel => ({ params: { id: novel.id }, props: { novel } }));
+}
+
+const { novel } = Astro.props;
+const { Content } = await render(novel);
+const chapters = (await getCollection('chapters', ({ data }) => data.novel === novel.id && !data.draft))
+  .sort((a, b) => a.data.order - b.data.order);
+---
+<BaseLayout title={`${novel.data.title} — my life I write`} reading>
+  <section class="view" data-view="novel">
+    <article class="piece piece--novel">
+      <a class="back" href="/novels/"><span aria-hidden="true">←</span> 小说</a>
+      <header class="novel-head">
+        <p class="eyebrow">{novel.data.type} · {novel.data.year}</p>
+        <h1 class="novel-title">{novel.data.title}</h1>
+        <p class="novel-status">{novel.data.status}</p>
+        {novel.data.summary && <p class="novel-summary">{novel.data.summary}</p>}
+      </header>
+
+      <div class="novel-start">
+        {chapters[0] && <a class="start" href={`/novels/${novel.id}/${chapters[0].id}/`}>从第一章开始 →</a>}
+        <span class="start__note">{chapters.length ? `${chapters.length} 章` : '正文还没放上来'}</span>
+      </div>
+
+      <div class="toc">
+        <div class="toc__head">
+          <h2 class="toc__heading">目录</h2>
+          <span class="toc__note">{chapters.length} 章</span>
+        </div>
+        <ol class="toc__list">
+          {chapters.map((chapter, index) => (
+            <li>
+              <a class="toc__row" href={`/novels/${novel.id}/${chapter.id}/`}>
+                <span class="toc__no">{String(index + 1).padStart(2, '0')}</span>
+                <span class="toc__title">{chapter.data.title}</span>
+                <span class="toc__dots"></span>
+                <span class="toc__meta">阅读</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      <div class="piece__body article-content">
+        <Content />
+      </div>
+    </article>
+  </section>
+</BaseLayout>

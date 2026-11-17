@@ -1,0 +1,17 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "my-life-i-write",
+  "main": "./src/worker.js",
+  "compatibility_date": "2026-11-17",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "my-life-i-write-comments",
+      "database_id": "c0d589db-6155-40e7-b235-9b262638f8a1"
+    }
+  ]
+}

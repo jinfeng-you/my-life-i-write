@@ -1,0 +1,105 @@
+---
+import '../styles/site.css';
+import '../styles/astro-overrides.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  reading?: boolean;
+}
+
+const {
+  title = 'my life I write',
+  description = '一个人的文章与小说。',
+  reading = false,
+} = Astro.props;
+
+const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString() : Astro.url.href;
+---
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f6f3ea" />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="my life I write" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content="/images/home.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content="/images/home.jpg" />
+    <link rel="icon" href="/favicon.svg" />
+  </head>
+  <body>
+    <a class="skip" href="#main">跳到正文</a>
+    <div class="progress" aria-hidden="true"><span class="progress__bar"></span></div>
+
+    <div class="reader-tools" aria-label="阅读设置">
+      <button class="reader-tools__btn" data-fs-toggle type="button" aria-label="切换到大字号" aria-pressed="false">
+        <span class="reader-tools__glyph" aria-hidden="true">字</span>
+        <span class="reader-tools__label" data-fs-label>标准</span>
+      </button>
+    </div>
+
+    <div class:list={['shell', { 'is-reading': reading }]} id="top">
+      <header class="masthead">
+        <div class="masthead__meta">
+          <span>Vol. 01</span>
+          <span class="masthead__meta-c">随笔 · 小说 · 留白</span>
+          <span data-since>Since 2026</span>
+        </div>
+
+        <h1 class="wordmark">
+          <a aria-label="my life I write，回到首页" href="/">
+            <span class="wordmark__line">my life</span>
+            <span class="wordmark__line wordmark__line--alt"><em>I</em> write</span>
+          </a>
+        </h1>
+      </header>
+
+      <nav class="nav" aria-label="主导航">
+        <a href="/" class:list={{ 'active': Astro.url.pathname === '/' }}>
+          <span class="nav__no">01</span><span class="nav__label">首页</span>
+        </a>
+        <a href="/writing/" class:list={{ 'active': Astro.url.pathname.startsWith('/writing') }}>
+          <span class="nav__no">02</span><span class="nav__label">文章</span>
+        </a>
+        <a href="/novels/" class:list={{ 'active': Astro.url.pathname.startsWith('/novels') }}>
+          <span class="nav__no">03</span><span class="nav__label">小说</span>
+        </a>
+        <a href="/about/" class:list={{ 'active': Astro.url.pathname.startsWith('/about') }}>
+          <span class="nav__no">04</span><span class="nav__label">关于</span>
+        </a>
+        <button class="theme" aria-label="切换夜墨主题" aria-pressed="false" type="button" data-theme-toggle>
+          <span class="theme__dot" aria-hidden="true"></span>
+          <span class="theme__label">夜</span>
+        </button>
+      </nav>
+
+      <main id="main">
+        <slot />
+      </main>
+
+      <footer class="footer">
+        <span>my life I write</span>
+        <span class="footer__c">© <span data-year>2026</span> · Astro</span>
+        <a class="footer__top" href="#top">回到顶部 ↑</a>
+      </footer>
+    </div>
+
+    <script is:inline>
+      const root = document.documentElement;
+      const theme = localStorage.getItem('mlw.theme');
+      const fs = localStorage.getItem('mlw.fs');
+      if (theme === 'ink') root.setAttribute('data-theme', 'ink');
+      if (fs === 'lg') root.setAttribute('data-fs', 'lg');
+    </script>
+    <script src="../scripts/site.js"></script>
+  </body>
+</html>

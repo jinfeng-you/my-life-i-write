@@ -1,0 +1,20 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props { article: CollectionEntry<'articles'>; index: number; }
+const { article, index } = Astro.props;
+const date = article.data.date.toISOString().slice(0,10).replaceAll('-', '.');
+---
+<a class="entry" href={`/writing/${article.id}/`}>
+  <span class="entry__index">{String(index + 1).padStart(2, '0')}</span>
+  <span class="entry__body">
+    <span class="entry__meta">
+      <span class="tag">{article.data.category}</span>
+      <time datetime={article.data.date.toISOString()}>{date}</time>
+      <span class="entry__views" data-view-key={`article:${article.id}`}>0 阅读</span>
+    </span>
+    <span class="entry__title">{article.data.title}</span>
+    {article.data.excerpt && <span class="entry__excerpt">{article.data.excerpt}</span>}
+  </span>
+  <span class="entry__arrow" aria-hidden="true">→</span>
+</a>

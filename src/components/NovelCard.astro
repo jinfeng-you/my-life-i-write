@@ -1,0 +1,17 @@
+---
+import type { CollectionEntry } from 'astro:content';
+interface Props { novel: CollectionEntry<'novels'>; }
+const { novel } = Astro.props;
+const cover = novel.data.cover ? `/${novel.data.cover}`.replace('/image/', '/images/') : '';
+---
+<a class="book" href={`/novels/${novel.id}/`}>
+  <span class="book__cover">
+    {cover ? <img class="cover-img" src={cover} alt={`${novel.data.title} 封面`} /> : <span>NO COVER</span>}
+  </span>
+  <span>
+    <span class="book__type">{novel.data.type}</span>
+    <span class="book__title">{novel.data.title}</span>
+    {novel.data.summary && <span class="book__desc">{novel.data.summary}</span>}
+    <span class="book__status">{novel.data.status}{novel.data.year ? ` · ${novel.data.year}` : ''}</span>
+  </span>
+</a>

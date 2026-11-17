@@ -1,0 +1,60 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArticleEntry from '../components/ArticleEntry.astro';
+import { getCollection } from 'astro:content';
+
+const articles = (await getCollection('articles', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const novels = await getCollection('novels', ({ data }) => !data.draft);
+const latest = articles.slice(0, 3);
+const novel = novels[0];
+---
+<BaseLayout>
+  <section class="view" data-view="home">
+    <div class="hero">
+      <div class="hero__text">
+        <p class="eyebrow">01 — 首页 / Home</p>
+        <h2 class="lede">把写下的东西，<br />一行一行排好。</h2>
+        <blockquote class="intro">
+          <p>很多年以后我们也许不在了，<br />所以趁现在，留下一些东西吧～。</p>
+        </blockquote>
+        <p class="hero__more"><a class="more" href="/about/">关于我 · 留言 <span aria-hidden="true">→</span></a></p>
+      </div>
+      <figure class="portrait">
+        <img class="portrait__img" src="/images/home.jpg" alt="秋天的河边，草岸旁边漂着落叶" decoding="async" />
+        <figcaption><span>PERSONAL ARCHIVE</span><span>2026</span></figcaption>
+      </figure>
+    </div>
+
+    <div class="split">
+      <section aria-labelledby="latest-title">
+        <div class="block-head">
+          <h3 id="latest-title">最近写的</h3>
+          <a class="more" href="/writing/">全部文章 <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="entries">
+          {latest.map((article, index) => <ArticleEntry article={article} index={index} />)}
+        </div>
+      </section>
+
+      <aside class="split__side" aria-labelledby="novel-title">
+        <div class="block-head">
+          <h3 id="novel-title">小说</h3>
+          <a class="more" href="/novels/">全部作品 <span aria-hidden="true">→</span></a>
+        </div>
+        {novel ? (
+          <a class="teaser" href={`/novels/${novel.id}/`}>
+            <span class="teaser__cover">
+              {novel.data.cover && <img class="cover-img" src={`/${novel.data.cover.replace('image/', 'images/')}`} alt={`${novel.data.title} 封面`} />}
+            </span>
+            <span>
+              <span class="teaser__type">{novel.data.type}</span>
+              <span class="teaser__title">{novel.data.title}</span>
+              <span class="teaser__note">{novel.data.status || '筹备中'}</span>
+            </span>
+          </a>
+        ) : <p class="empty">还没有小说。</p>}
+      </aside>
+    </div>
+  </section>
+</BaseLayout>

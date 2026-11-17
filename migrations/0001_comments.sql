@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS comments (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  text TEXT NOT NULL,
+  post_slug TEXT NOT NULL,
+  status INTEGER NOT NULL DEFAULT 1,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_comments_post_status
+ON comments(post_slug, status, id DESC);
