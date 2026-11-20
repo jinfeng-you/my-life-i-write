@@ -533,9 +533,9 @@
         const thought = window.prompt('写下你对这句话的想法：');
         if (!thought?.trim()) return;
         try {
-          const response = await fetch('/api/annotations', {
+          const response = await fetch(`/api/annotations?post=${encodeURIComponent(post)}`, {
             method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-            body: JSON.stringify({ post, selected_text: selectedText, start_offset: offsets.start, end_offset: offsets.end, name: name.trim(), thought: thought.trim() }),
+            body: JSON.stringify({ selected_text: selectedText, start_offset: offsets.start, end_offset: offsets.end, name: name.trim(), thought: thought.trim() }),
           });
           if (!response.ok) throw new Error('annotation failed');
           location.reload();
