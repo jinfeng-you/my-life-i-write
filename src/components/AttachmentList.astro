@@ -1,0 +1,34 @@
+---
+interface Attachment {
+  name: string;
+  path: string;
+  description?: string;
+}
+
+interface Props {
+  attachments?: Attachment[];
+}
+
+const { attachments = [] } = Astro.props;
+const getExt = (path: string) => path.split('?')[0].split('#')[0].split('.').pop()?.toUpperCase() || 'FILE';
+---
+{attachments.length > 0 && (
+  <section class="attachments" aria-label="文章附件">
+    <div class="attachments__head">
+      <span class="eyebrow">附件 / 下载</span>
+      <span class="attachments__note">{attachments.length} 个文件</span>
+    </div>
+    <ul class="attachments__list">
+      {attachments.map((file) => (
+        <li class="attachments__item">
+          <span class="attachments__type">{getExt(file.path)}</span>
+          <span class="attachments__body">
+            <a class="attachments__name" href={file.path}>{file.name}</a>
+            {file.description && <span class="attachments__desc">{file.description}</span>}
+          </span>
+          <a class="attachments__download" href={`${file.path}?download=1`} download aria-label={`下载 ${file.name}`}>下载 ↓</a>
+        </li>
+      ))}
+    </ul>
+  </section>
+)}

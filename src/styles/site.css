@@ -1543,8 +1543,25 @@ a { color: inherit; }
 .reply-form > div { display: flex; align-items: center; gap: 12px; }
 
 .article-content { position: relative; }
+.article-content img { display: block; max-width: 100%; height: auto; margin: 24px auto; border: 1px solid var(--line-soft); }
+.article-content figure { margin: 28px 0; }
+.article-content figcaption { margin-top: 8px; color: var(--ink-3); text-align: center; font: 0.68rem/1.6 var(--sans); }
+.article-content a { color: var(--accent); text-underline-offset: 0.16em; }
 .annotation-highlight { background: var(--accent-soft); box-shadow: inset 0 -1px 0 var(--accent); }
-.reader-highlight { background: color-mix(in srgb, var(--accent-soft) 55%, transparent); box-shadow: inset 0 -1px 0 var(--ink-3); }
+.reader-highlight {
+  background: transparent;
+  box-shadow: none;
+  color: inherit;
+  font: inherit;
+  font-style: normal;
+  font-size: inherit;
+  line-height: inherit;
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: var(--ink-3);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
 .annotation-marker {
   display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px;
   margin-left: 4px; padding: 0 5px; border: 1px solid var(--accent); border-radius: 999px;
@@ -1557,6 +1574,20 @@ a { color: inherit; }
 }
 .annotation-bubble button { border: 0; background: transparent; color: var(--ink); padding: 7px 10px; font: 0.7rem/1 var(--sans); cursor: pointer; }
 .annotation-bubble button:hover { color: var(--accent); background: var(--accent-soft); }
+
+.attachments { margin-top: 34px; padding-top: 22px; border-top: 1px solid var(--line); }
+.attachments__head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 12px; }
+.attachments__note { color: var(--ink-3); font: 0.68rem/1 var(--sans); }
+.attachments__list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line-soft); }
+.attachments__item { display: flex; align-items: center; gap: 12px; padding: 13px 0; border-bottom: 1px solid var(--line-soft); }
+.attachments__type { min-width: 38px; padding: 5px 6px; border: 1px solid var(--line); color: var(--ink-3); text-align: center; font: 0.58rem/1 var(--sans); letter-spacing: .04em; }
+.attachments__body { min-width: 0; flex: 1; display: grid; gap: 4px; }
+.attachments__name { color: var(--ink); text-decoration: none; font: 0.84rem/1.5 var(--sans); }
+.attachments__name:hover { color: var(--accent); }
+.attachments__desc { color: var(--ink-3); font: 0.68rem/1.5 var(--sans); }
+.attachments__download { color: var(--ink-2); text-decoration: none; font: 1rem/1 var(--sans); padding: 6px; }
+.attachments__download:hover { color: var(--accent); }
+
 .annotations { margin-top: 30px; padding-top: 22px; border-top: 1px solid var(--line); }
 .annotations__head { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
 .annotations__close { border: 0; background: transparent; color: var(--ink-3); cursor: pointer; font: 0.7rem var(--sans); }

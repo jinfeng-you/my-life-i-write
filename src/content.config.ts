@@ -10,6 +10,11 @@ const articles = defineCollection({
     date: z.coerce.date(),
     excerpt: z.string().optional().default(''),
     draft: z.boolean().default(false),
+    attachments: z.array(z.object({
+      name: z.string(),
+      path: z.string(),
+      description: z.string().optional().default(''),
+    })).default([]),
   }),
 });
 

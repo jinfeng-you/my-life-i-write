@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>一种确定二元线性变换支撑集的办法</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(', '\\)']],
+    displayMath: [['\\[', '\\]']],
+    processEscapes: true
+  },
+  chtml: { scale: 1.04, mathmlSpacing: false },
+  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
+  startup: {
+    ready: () => {
+      MathJax.startup.defaultReady();
+      MathJax.startup.promise.then(() => {
+        document.documentElement.setAttribute('data-mathjax', 'ready');
+        document.title = 'READY';
+      });
+    }
+  }
+};
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<style>
+  :root {
+    --ink: #2e2a26;
+    --ink-soft: #504a43;
+    --accent: #b4642c;
+    --accent-deep: #924a1c;
+    --accent-pale: #f7ecdf;
+    --rule: #d9d1c4;
+    --paper: #fdfbf6;
+    --note-bg: #f5f1e9;
+  }
+
+  @page {
+    size: A4;
+    margin: 20mm 27mm 20mm 27mm;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { background: #e9e5dc; }
+
+  body {
+    max-width: 176mm;
+    margin: 0 auto;
+    padding: 14mm 16mm 20mm;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Noto Serif SC", "Source Han Serif SC", "STSong", "SimSun", "Times New Roman", serif;
+    font-size: 15px;
+    line-height: 1.9;
+    text-align: justify;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    box-shadow: 0 2px 24px rgba(0,0,0,.10);
+  }
+
+  /* 页眉 */
+  .running-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: "Times New Roman", serif;
+    font-size: 10.5px;
+    letter-spacing: .12em;
+    color: #8d8377;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 7px;
+    margin-bottom: 34px;
+    text-transform: uppercase;
+  }
+  .running-head .cn { font-family: "Noto Serif SC", "STSong", serif; letter-spacing: .06em; text-transform: none; }
+
+  /* 标题区 */
+  header.doc-head { text-align: center; margin-bottom: 38px; }
+  .kicker {
+    font-size: 11px;
+    letter-spacing: .34em;
+    color: var(--accent);
+    margin-bottom: 12px;
+    text-indent: .34em;
+  }
+  h1 {
+    font-size: 25px;
+    line-height: 1.55;
+    font-weight: 700;
+    letter-spacing: .02em;
+    margin: 0 0 6px;
+    color: #26221e;
+  }
+  .subtitle {
+    margin: 0;
+    font-size: 15px;
+    color: var(--ink-soft);
+    letter-spacing: .06em;
+  }
+  .title-rule {
+    width: 76px;
+    height: 3px;
+    background: var(--accent);
+    margin: 20px auto 0;
+    border-radius: 2px;
+  }
+
+  /* 章节标题 */
+  h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent-deep);
+    margin: 44px 0 20px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--rule);
+    break-after: avoid;
+    text-align: left;
+  }
+  h2 .num {
+    font-family: "Times New Roman", serif;
+    font-size: 25px;
+    margin-right: 12px;
+    color: var(--accent);
+  }
+  h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent-deep);
+    margin: 30px 0 14px;
+    padding-left: 11px;
+    border-left: 3px solid var(--accent);
+    line-height: 1.5;
+    break-after: avoid;
+    text-align: left;
+  }
+
+  p { margin: 0 0 14px; text-indent: 2em; }
+  p.noindent { text-indent: 0; }
+
+  strong, .term {
+    font-weight: 700;
+    color: var(--accent-deep);
+    background: linear-gradient(transparent 58%, var(--accent-pale) 58%);
+    padding: 0 2px;
+  }
+
+  /* 定义框 */
+  .def {
+    margin: 12px 0 14px;
+    padding: 9px 16px 9px 18px;
+    background: var(--note-bg);
+    border-left: 3px solid #c8a276;
+    text-indent: 0;
+    font-size: 14.5px;
+    color: #3b352e;
+    break-inside: avoid;
+  }
+  .def .label {
+    font-weight: 700;
+    color: var(--accent-deep);
+    margin-right: 10px;
+  }
+
+  /* 公式 */
+  mjx-container[jax="CHTML"][display="true"] {
+    margin: 16px 0 !important;
+    padding: 4px 0;
+    break-inside: avoid;
+    text-align: center !important;
+  }
+  mjx-container { color: #23201d; }
+
+  /* 图片 */
+  figure {
+    margin: 22px auto 24px;
+    text-align: center;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  figure img {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #e5ded2;
+    border-radius: 2px;
+    background: #fff;
+  }
+  figure.wide img { width: 146mm; }
+  figure.tall img { width: 112mm; }
+  figcaption {
+    margin-top: 9px;
+    font-size: 12.5px;
+    color: #6f665c;
+    letter-spacing: .04em;
+    text-indent: 0;
+    text-align: center;
+  }
+  figcaption b { color: var(--accent-deep); font-weight: 700; margin-right: 8px; }
+
+  /* 页边注 */
+  .sidenote {
+    float: right;
+    clear: right;
+    width: 44mm;
+    margin: 4px -3mm 12px 12px;
+    padding: 9px 12px;
+    background: #f6f2eb;
+    border-top: 2px solid var(--accent);
+    font-size: 11.5px;
+    line-height: 1.65;
+    color: #6a6056;
+    text-indent: 0;
+    text-align: left;
+    break-inside: avoid;
+  }
+  .sidenote .cap {
+    display: block;
+    font-size: 10px;
+    letter-spacing: .1em;
+    color: var(--accent);
+    margin-bottom: 3px;
+  }
+
+  /* 要点回顾 */
+  .keypoints {
+    margin: 38px 0 8px;
+    padding: 16px 20px 14px;
+    background: #f7f3ec;
+    border: 1px solid #e2d8c8;
+    border-top: 3px solid var(--accent);
+    break-inside: avoid;
+  }
+  .keypoints .kp-title {
+    font-weight: 700;
+    color: var(--accent-deep);
+    font-size: 15px;
+    margin-bottom: 8px;
+    letter-spacing: .06em;
+  }
+  .keypoints ol { margin: 0; padding-left: 1.6em; }
+  .keypoints li { margin-bottom: 5px; font-size: 14px; line-height: 1.75; }
+
+  footer.doc-foot {
+    margin-top: 34px;
+    padding-top: 9px;
+    border-top: 1px solid var(--rule);
+    font-size: 11px;
+    color: #9a9084;
+    text-align: center;
+    letter-spacing: .08em;
+  }
+
+  @media screen {
+    body { margin: 24px auto; }
+  }
+  @media print {
+    html { background: #fff; }
+    body { box-shadow: none; margin: 0; padding: 0; max-width: none; }
+    .running-head { margin-top: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="running-head">
+  <span>Linear Algebra &nbsp;·&nbsp; Change of Variables</span>
+  <span class="cn">数学笔记 &nbsp;/&nbsp; 线性变换视角</span>
+</div>
+
+<header class="doc-head">
+  <div class="kicker">数学笔记 · 线性代数与概率论的交叉</div>
+  <h1>一种确定二元线性变换支撑集的办法</h1>
+  <p class="subtitle">——矩阵代表线性变换的视角</p>
+  <div class="title-rule"></div>
+</header>
+
+<h2><span class="num">1</span>矩阵和行列式的本质</h2>
+
+<h3>1.1　向量坐标与基</h3>
+
+<p>向量坐标是相对而言的，离开基底谈坐标没有意义。在平面直角坐标系中，向量 \(\mathbf v\) 如果可以表示成 \(\mathbf v=v_1\mathbf e_1+v_2\mathbf e_2\)，其中 \(\mathbf e_1\) 和 \(\mathbf e_2\) 是平面直角坐标系的基向量 \(\begin{pmatrix}1\\0\end{pmatrix}\) 和 \(\begin{pmatrix}0\\1\end{pmatrix}\)，那么根据向量加法，\(\mathbf v=v_1\begin{pmatrix}1\\0\end{pmatrix}+v_2\begin{pmatrix}0\\1\end{pmatrix}=\begin{pmatrix}v_1\\v_2\end{pmatrix}\)。</p>
+
+<p>因为 \(\mathbf e_1\) 和 \(\mathbf e_2\) 是不共线的向量，所以任意二维向量都可以在平面直角坐标系下对应一个坐标，这也是它们被称为基的原因。</p>
+
+<div class="def"><span class="label">基底</span>向量空间中的一组线性无关且能张成整个空间的向量。</div>
+<div class="def"><span class="label">线性无关</span>线性组合 \(a_1\mathbf e_1+a_2\mathbf e_2=\mathbf 0\) 当且仅当 \(a_1=a_2=0\)。</div>
+
+<p>任意平面向量 \(\mathbf v\) 在 \(\mathbf e_1,\mathbf e_2\) 基底下的坐标 \((v_1,v_2)\) 都能写成矩阵乘法的形式：</p>
+
+\[
+\mathbf v=v_1\mathbf e_1+v_2\mathbf e_2=[\mathbf e_1,\mathbf e_2]\begin{pmatrix}v_1\\v_2\end{pmatrix}
+\]
+
+<p>平面直角坐标系下的基是一个 \(2\times 2\) 单位矩阵，作用的结果还是 \(\begin{pmatrix}v_1\\v_2\end{pmatrix}\)。</p>
+
+<h3>1.2　线性变换用矩阵表示，矩阵的本质是一种线性变换</h3>
+
+<p>线性变换是一种不改变原点和向量加法（三角形法则／平行四边形法则）、数乘规则的变换，在平面坐标系下<strong>线性变换后网格线仍然平行等距分布</strong>。</p>
+
+<p>假设 \(T\) 代表一种线性变换，对于向量 \(\mathbf v,\mathbf w\)，有 \(T(\mathbf v+\mathbf w)=T\mathbf v+T\mathbf w\)，\(T(\lambda\mathbf v)=\lambda(T\mathbf v)\)。</p>
+
+<p>如图 1 所示，\(\mathbf p\) 在标准正交基下的坐标是 \(\begin{pmatrix}3\\2\end{pmatrix}\)，\(\mathbf p=3\mathbf e_1+2\mathbf e_2\)。经过某线性变换 \(T\) 后，\(T(\mathbf p)=T(3\mathbf e_1+2\mathbf e_2)=3(T\mathbf e_1)+2(T\mathbf e_2)\)。线性变换 \(T\) 把原来的基底 \([\mathbf e_1,\mathbf e_2]\) 变成了 \([\mathbf b_1,\mathbf b_2]\)，其中 \(\mathbf b_1=T\mathbf e_1,\ \mathbf b_2=T\mathbf e_2\)。</p>
+
+<p>因为 \(\mathbf b_1\) 和 \(\mathbf b_2\) 仍然在二维空间中，它们分别可以用原来的基 \(\mathbf e_1,\mathbf e_2\) 线性表示。</p>
+
+<p>向量 \(\mathbf p\) 经过线性变换后得到的向量 \(T\mathbf p\) 在新基 \([\mathbf b_1,\mathbf b_2]\) 下的表示就是</p>
+
+\[
+T(\mathbf p)=3\mathbf b_1+2\mathbf b_2=[\mathbf b_1,\mathbf b_2]\begin{pmatrix}3\\2\end{pmatrix}
+\]
+
+<p>那么在原来的基（平面直角坐标系）下，\(T\mathbf p\) 是在哪个位置呢？我们要做的就是把新基 \([\mathbf b_1,\mathbf b_2]\) 用原来的基 \([\mathbf e_1,\mathbf e_2]\) 表示出来，才能显示 \(T\mathbf p\) 在平面直角坐标系下的位置。因为这个线性变换仍然在二维空间中，它们一定能被 \(\mathbf e_1\) 和 \(\mathbf e_2\) 的线性组合表示，即</p>
+
+\[
+\mathbf b_1=a_{11}\mathbf e_1+a_{21}\mathbf e_2=[\mathbf e_1,\mathbf e_2]\begin{pmatrix}a_{11}\\a_{21}\end{pmatrix},\qquad
+\mathbf b_2=a_{12}\mathbf e_1+a_{22}\mathbf e_2=[\mathbf e_1,\mathbf e_2]\begin{pmatrix}a_{12}\\a_{22}\end{pmatrix}
+\]
+
+\[
+\begin{aligned}
+T\mathbf p&=[\mathbf b_1,\mathbf b_2]\begin{pmatrix}3\\2\end{pmatrix}
+=\left[[\mathbf e_1,\mathbf e_2]\begin{pmatrix}a_{11}\\a_{21}\end{pmatrix},\ [\mathbf e_1,\mathbf e_2]\begin{pmatrix}a_{12}\\a_{22}\end{pmatrix}\right]\begin{pmatrix}3\\2\end{pmatrix}\\[3pt]
+&=[\mathbf e_1,\mathbf e_2]\begin{bmatrix}a_{11}&a_{12}\\a_{21}&a_{22}\end{bmatrix}\begin{pmatrix}3\\2\end{pmatrix}
+\end{aligned}
+\]
+
+<p>对比线性变换前 \(\mathbf p=[\mathbf e_1,\mathbf e_2]\begin{pmatrix}3\\2\end{pmatrix}\) 和线性变换后 \(T\mathbf p=[\mathbf e_1,\mathbf e_2]\begin{bmatrix}a_{11}&a_{12}\\a_{21}&a_{22}\end{bmatrix}\begin{pmatrix}3\\2\end{pmatrix}\)，我们发现线性变换 \(T\) 对 \(\mathbf p\) 的作用完全由矩阵 \(A=\begin{bmatrix}a_{11}&a_{12}\\a_{21}&a_{22}\end{bmatrix}\) 确定，它将 \(\mathbf p\) 从平面直角坐标系的 \(\begin{pmatrix}3\\2\end{pmatrix}\) 变换到 \(\begin{bmatrix}a_{11}&a_{12}\\a_{21}&a_{22}\end{bmatrix}\begin{pmatrix}3\\2\end{pmatrix}\)。</p>
+
+<p>而这个矩阵的列 \(\begin{pmatrix}a_{11}\\a_{21}\end{pmatrix}\)、\(\begin{pmatrix}a_{12}\\a_{22}\end{pmatrix}\) 刚好就是原来基底 \(\mathbf e_1\) 和 \(\mathbf e_2\) 变换后的位置。</p>
+
+<p>因为基向量可以张成空间中任意向量，所以对于原来平面直角坐标系下的任意坐标 \(\begin{pmatrix}x\\y\end{pmatrix}\)，经过线性变换 \(T\) 后的新位置就是</p>
+
+\[
+\begin{bmatrix}a_{11}&a_{12}\\a_{21}&a_{22}\end{bmatrix}\begin{pmatrix}x\\y\end{pmatrix}
+\]
+
+<figure class="wide">
+  <img src="assets/fig-basis.png" alt="坐标与基示意图：系数仍是 (3,2)，只换基底就落到另一个点">
+  <figcaption><b>图 1</b>坐标与基：离开基底谈“坐标”没有意义</figcaption>
+</figure>
+
+<p>这就是学习线性组合、张成和基的应用所在，它告诉我们线性变换可以用矩阵表示，矩阵的本质就是一种线性变换。如果这个变换直接作用在标准正交基下，代表线性变换 \(T\) 的矩阵 \(A\) 的列就是对应基向量的新位置，对任意向量的作用就相当于左乘 \(A\)。</p>
+
+<h3>1.3　矩阵的行列式表示线性变换带来的面积变化</h3>
+
+<p>标准正交基下，基向量 \(\begin{pmatrix}1\\0\end{pmatrix}\) 和 \(\begin{pmatrix}0\\1\end{pmatrix}\) 围成的小方格面积为 1。线性变换后基向量 \(\begin{pmatrix}a\\c\end{pmatrix}\) 和 \(\begin{pmatrix}b\\d\end{pmatrix}\) 围成的面积是 \(|a_{11}a_{22}-a_{12}a_{21}|\)，正好是 \(|\det(A)|\)。行列式的大小即线性变换带来的面积大小变化，行列式的正负表示线性变换带来的方向变化，例如 y 轴被变换至 x 轴的顺时针方向 \((0,\pi)\)。</p>
+
+<p>如下图所示，对于线性变换 \(T\) 后基向量 \(T\mathbf e_1=\begin{pmatrix}a\\c\end{pmatrix}\)、\(T\mathbf e_2=\begin{pmatrix}b\\d\end{pmatrix}\) 围成的平行四边形面积</p>
+
+\[
+S=(a+b)(c+d)-2\cdot\tfrac12(a+b)c-2\cdot\tfrac12(c+d)b=ad-bc=\det\begin{bmatrix}a&b\\c&d\end{bmatrix}
+\]
+
+<figure class="tall">
+  <img src="assets/fig-determinant.png" alt="线性变换后的基向量与平行四边形面积">
+  <figcaption><b>图 2</b>线性变换的面积效应：单位方格被拉成平行四边形</figcaption>
+</figure>
+
+<h2><span class="num">2</span>雅可比矩阵代表的线性变换</h2>
+
+<p>对于二元随机变量 \((X,Y)\) 到 \((U,V)\) 的变换，其中 \(U=X+Y,\ V=X-Y\)，原支撑集为 \(0&lt;y&lt;x&lt;1\)，要求变换后对应的支撑集，关键是确定原支撑集区域顶点代表的向量以及变换后向量的位置。</p>
+
+<p>写成向量形式</p>
+
+\[
+\begin{pmatrix}U\\V\end{pmatrix}=\begin{bmatrix}1&1\\1&-1\end{bmatrix}\begin{pmatrix}X\\Y\end{pmatrix}
+\]
+
+<div class="sidenote">
+  <span class="cap">侧注 · 关键观察</span>
+  雅可比矩阵 \(J\) 就是从 \((X,Y)\) 到 \((U,V)\) 的线性变换矩阵。标准基 \(e_1,e_2\) 分别被映到 \((1,1)\) 与 \((1,-1)\)。
+</div>
+
+<p>发现雅可比矩阵 \(J\) 正好是代表从 \((X,Y)\) 到 \((U,V)\) 线性变换的矩阵。平面直角坐标系下的基 \(\begin{pmatrix}1\\0\end{pmatrix}\) 和 \(\begin{pmatrix}0\\1\end{pmatrix}\) 被分别变换到 \(\begin{pmatrix}1\\1\end{pmatrix}\) 和 \(\begin{pmatrix}1\\-1\end{pmatrix}\)。</p>
+
+<p>由下图可知，原支撑集由 \(OAC\) 围成的三角形区域构成，已知线性变换对应的矩阵就是雅可比矩阵 \(J=\begin{bmatrix}1&1\\1&-1\end{bmatrix}\)。\(O\) 是原点，保持不变；\(A=\begin{pmatrix}1\\0\end{pmatrix}\) 变换后的位置为</p>
+
+\[
+\begin{bmatrix}1&1\\1&-1\end{bmatrix}\begin{pmatrix}1\\0\end{pmatrix}=\begin{pmatrix}1\\1\end{pmatrix},
+\qquad\text{正好是 }C\text{ 点位置}
+\]
+
+<p>\(C=\begin{pmatrix}1\\1\end{pmatrix}\) 变换后的位置为</p>
+
+\[
+\begin{bmatrix}1&1\\1&-1\end{bmatrix}\begin{pmatrix}1\\1\end{pmatrix}=\begin{pmatrix}2\\0\end{pmatrix},
+\qquad\text{定为点 }E
+\]
+
+<p>那么变换后支撑集就是 \(OCE\) 围成的三角形区域。</p>
+
+<p>面积验证：\(OAC\) 的面积为 \(\tfrac12\)，\(OCE\) 的面积为 \(1\)，面积是原来的 2 倍；\(\det(J)=-1-1=-2\)，绝对值 2 正好是面积放大倍数，负号表示线性变换后的基向量相对位置发生变化，图中体现的就是 \(J\mathbf e_2\) 向量在 \(J\mathbf e_1\) 向量的顺时针方向。</p>
+
+<figure class="tall">
+  <img src="assets/fig-support.png" alt="支撑集的线性变换：原区域 OAC 映射为 OCE">
+  <figcaption><b>图 3</b>支撑集的线性变换：原区域 \(OAC\) 映射为 \(OCE\)</figcaption>
+</figure>
+
+<div class="keypoints">
+  <div class="kp-title">要点回顾</div>
+  <ol>
+    <li>向量坐标依赖基底；线性变换后的基向量正是变换矩阵的列。</li>
+    <li>行列式的绝对值是变换的面积伸缩倍数，符号反映定向是否翻转。</li>
+    <li>求变换后的支撑集，只需把原区域的顶点左乘雅可比矩阵，再按新顶点重画区域。</li>
+  </ol>
+</div>
+
+<footer class="doc-foot">一种确定二元线性变换支撑集的办法 · 线性变换视角下的矩阵与行列式</footer>
+
+</body>
+</html>

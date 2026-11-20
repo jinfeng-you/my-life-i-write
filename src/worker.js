@@ -291,6 +291,17 @@ export default {
       console.error(error);
       return json({ error: '服务器暂时无法处理请求。' }, 500);
     }
+
+    // /downloads/ 下的静态文件强制按附件下载；图片等其他 public 资源仍按原方式返回。
+    if (url.pathname.startsWith('/downloads/') && url.searchParams.get('download') === '1') {
+      const asset = await env.ASSETS.fetch(request);
+      if (asset.status !== 200) return asset;
+      const headers = new Headers(asset.headers);
+      const filename = decodeURIComponent(url.pathname.split('/').pop() || 'download');
+      headers.set('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(filename)}`);
+      return new Response(asset.body, { status: asset.status, statusText: asset.statusText, headers });
+    }
+
     return env.ASSETS.fetch(request);
   },
 };

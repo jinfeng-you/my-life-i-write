@@ -545,14 +545,50 @@
       });
     }
 
-    articleBody.addEventListener('mouseup', () => {
-      setTimeout(() => {
+    let lastSelectionSignature = '';
+    let selectionTimer = null;
+
+    function selectionSignature(selection) {
+      if (!selection || selection.rangeCount === 0) return '';
+      const range = selection.getRangeAt(0);
+      return `${range.startContainer.nodeValue || ''}:${range.startOffset}-${range.endContainer.nodeValue || ''}:${range.endOffset}`;
+    }
+
+    function maybeShowSelectionBubble(delay = 120) {
+      window.clearTimeout(selectionTimer);
+      selectionTimer = window.setTimeout(() => {
         const selection = window.getSelection();
-        if (!selection || selection.isCollapsed || !selection.toString().trim()) return;
+        if (!selection || selection.isCollapsed || !selection.toString().trim() || selection.rangeCount === 0) return;
         const range = selection.getRangeAt(0);
         if (!articleBody.contains(range.commonAncestorContainer)) return;
+        if (range.commonAncestorContainer.closest?.('.annotation-bubble, .annotation-marker')) return;
+        const signature = selectionSignature(selection);
+        if (!signature || signature === lastSelectionSignature) return;
+        lastSelectionSignature = signature;
         showSelectionBubble(range.cloneRange());
-      }, 0);
+      }, delay);
+    }
+
+    // 桌面端：鼠标选词完成后触发。
+    articleBody.addEventListener('mouseup', () => maybeShowSelectionBubble(60));
+
+    // 手机端：系统文字选择通常在 touchend 之后才真正提交，因此不能只监听 mouseup。
+    articleBody.addEventListener('touchend', () => maybeShowSelectionBubble(260), { passive: true });
+
+    // iOS / Android 的文字选择会触发 selectionchange；再补一次监听，兼容不同浏览器。
+    document.addEventListener('selectionchange', () => {
+      const selection = window.getSelection();
+      if (!selection || selection.isCollapsed || !selection.toString().trim() || selection.rangeCount === 0) return;
+      const range = selection.getRangeAt(0);
+      if (!articleBody.contains(range.commonAncestorContainer)) return;
+      maybeShowSelectionBubble(220);
+    });
+
+    // 点击页面其他位置时关闭浮层，避免移动端浮层挡住正文。
+    document.addEventListener('pointerdown', (event) => {
+      if (!event.target.closest?.('.annotation-bubble')) {
+        document.querySelector('.annotation-bubble')?.remove();
+      }
     });
 
     applyPrivateHighlights();

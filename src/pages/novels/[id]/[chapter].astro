@@ -30,9 +30,17 @@ const next = all[currentIndex + 1];
         <h1 class="chapter-head__title">{chapter.data.title}</h1>
         <p class="chapter-head__meta">第 {chapter.data.order} 章 · {novel.data.status}</p>
       </header>
-      <div class="chapter__body chapter__body--single chapter-content">
+      <div class="chapter__body chapter__body--single chapter-content article-content" data-annotation-post={`chapter:${chapter.id}`} data-annotation-title={chapter.data.title}>
         <Content />
       </div>
+
+      <section class="annotations" data-annotations-panel hidden>
+        <div class="annotations__head">
+          <span class="eyebrow">读者想法</span>
+          <button type="button" class="annotations__close" data-annotations-close>关闭</button>
+        </div>
+        <div data-annotations-list></div>
+      </section>
       <nav class="chapter-nav" aria-label="章节翻页">
         {prev ? <a class="chapter-nav__link" href={`/novels/${novel.id}/${prev.id}/`}><span class="chapter-nav__dir">← 上一章</span><span>{prev.data.title}</span></a> : <span></span>}
         <a class="chapter-nav__link chapter-nav__link--toc" href={`/novels/${novel.id}/`}><span class="chapter-nav__dir">目录</span></a>
