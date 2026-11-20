@@ -19,7 +19,7 @@ const date = article.data.date.toISOString().slice(0,10).replaceAll('-', '.');
         <p class="piece__meta"><span class="tag">{article.data.category}</span><time>{date}</time></p>
         <h1 class="piece__title">{article.data.title}</h1>
       </header>
-      <div class="piece__body article-content">
+      <div class="piece__body article-content" data-annotation-post={`article:${article.id}`} data-annotation-title={article.data.title}>
         <Content />
       </div>
       <div class="react" data-react="article" data-stat-key={`article:${article.id}`}>
@@ -29,6 +29,15 @@ const date = article.data.date.toISOString().slice(0,10).replaceAll('-', '.');
         </button>
         <span class="react__views"><span data-views>0</span> 次阅读</span>
       </div>
+
+      <section class="annotations" data-annotations-panel hidden>
+        <div class="annotations__head">
+          <span class="eyebrow">读者想法</span>
+          <button type="button" class="annotations__close" data-annotations-close>关闭</button>
+        </div>
+        <div data-annotations-list></div>
+      </section>
+
       <footer class="piece__foot">
         <span>{article.data.title}</span>
         <a href="/writing/">回到文章列表</a>

@@ -1524,3 +1524,50 @@ a { color: inherit; }
   body { background: #fff; color: #000; }
   .shell { border: 0; }
 }
+
+/* ---------------- 公共互动：留言回复、点赞、正文批注 ---------------- */
+.msg-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+.msg-action {
+  border: 0; padding: 0; background: transparent; color: var(--ink-3);
+  font: inherit; font-size: 0.72rem; cursor: pointer;
+}
+.msg-action:hover, .msg-action.is-liked { color: var(--accent); }
+.msg--reply { margin-left: 24px; padding-left: 18px; border-left: 1px solid var(--line-soft); }
+.msgs__replies { list-style: none; margin: 8px 0 0; padding: 0; }
+.reply-form, .thought-form { display: grid; gap: 10px; margin-top: 12px; padding: 14px; border: 1px solid var(--line-soft); background: var(--paper-tint); }
+.reply-form input, .reply-form textarea, .thought-form input, .thought-form textarea {
+  width: 100%; box-sizing: border-box; border: 1px solid var(--line); background: var(--paper);
+  color: var(--ink); padding: 9px 10px; font: inherit; font-size: 0.88rem;
+}
+.reply-form input:focus, .reply-form textarea:focus, .thought-form input:focus, .thought-form textarea:focus { outline: 1px solid var(--accent); outline-offset: 1px; }
+.reply-form > div { display: flex; align-items: center; gap: 12px; }
+
+.article-content { position: relative; }
+.annotation-highlight { background: var(--accent-soft); box-shadow: inset 0 -1px 0 var(--accent); }
+.reader-highlight { background: color-mix(in srgb, var(--accent-soft) 55%, transparent); box-shadow: inset 0 -1px 0 var(--ink-3); }
+.annotation-marker {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px;
+  margin-left: 4px; padding: 0 5px; border: 1px solid var(--accent); border-radius: 999px;
+  background: var(--paper); color: var(--accent); font: 0.62rem/1 var(--sans); cursor: pointer; vertical-align: super;
+}
+.annotation-marker:hover { background: var(--accent-soft); }
+.annotation-bubble {
+  position: absolute; z-index: 110; display: flex; gap: 0; padding: 4px;
+  border: 1px solid var(--line); background: var(--paper); box-shadow: 0 8px 28px rgba(0,0,0,.12);
+}
+.annotation-bubble button { border: 0; background: transparent; color: var(--ink); padding: 7px 10px; font: 0.7rem/1 var(--sans); cursor: pointer; }
+.annotation-bubble button:hover { color: var(--accent); background: var(--accent-soft); }
+.annotations { margin-top: 30px; padding-top: 22px; border-top: 1px solid var(--line); }
+.annotations__head { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.annotations__close { border: 0; background: transparent; color: var(--ink-3); cursor: pointer; font: 0.7rem var(--sans); }
+.annotations__close:hover { color: var(--accent); }
+.annotations__quote { margin: 18px 0; padding: 12px 16px; border-left: 2px solid var(--accent); color: var(--ink-2); font-family: var(--song); }
+.thought { padding: 15px 0; border-bottom: 1px solid var(--line-soft); }
+.thought__head { display: flex; justify-content: space-between; gap: 14px; color: var(--ink-3); font-size: 0.7rem; }
+.thought__head strong { color: var(--ink); font-weight: 500; }
+.thought p { margin: 8px 0 0; line-height: 1.8; }
+
+@media (max-width: 620px) {
+  .msg--reply { margin-left: 10px; padding-left: 12px; }
+  .annotation-bubble { position: fixed; left: 50% !important; top: auto !important; bottom: 18px; transform: translateX(-50%); }
+}
